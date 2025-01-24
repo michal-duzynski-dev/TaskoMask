@@ -1,0 +1,44 @@
+@startuml TaskoMask Architecture Overview
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title TaskoMask Architecture Overview
+
+Person(user, "User", "A user of the TaskoMask system")
+
+System_Boundary(c1, "TaskoMask") {
+    Container(api_gateway, "API Gateway", "Ocelot", "Routes and aggregates API calls")
+    
+    Container(identity_service, "Identity Service", ".NET", "Handles authentication and authorization")
+    Container(boards_write, "Boards Write API", ".NET", "Handles board commands")
+    Container(boards_read, "Boards Read API", ".NET", "Handles board queries")
+    Container(tasks_write, "Tasks Write API", ".NET", "Handles task commands")
+    Container(tasks_read, "Tasks Read API", ".NET", "Handles task queries")
+    Container(owners_service, "Owners Service", ".NET", "Manages ownership and permissions")
+    
+    ContainerDb(event_store, "Event Store", "Redis", "Stores domain events")
+    ContainerDb(message_queue, "Message Queue", "RabbitMQ", "Handles async communication")
+    ContainerDb(read_db, "Read Database", "MongoDB", "Optimized for queries")
+}
+
+Rel(user, api_gateway, "Uses", "HTTPS")
+Rel(api_gateway, identity_service, "Authenticates", "HTTPS")
+Rel(api_gateway, boards_read, "Reads", "HTTPS")
+Rel(api_gateway, boards_write, "Writes", "HTTPS")
+Rel(api_gateway, tasks_read, "Reads", "HTTPS")
+Rel(api_gateway, tasks_write, "Writes", "HTTPS")
+Rel(api_gateway, owners_service, "Manages", "HTTPS")
+
+Rel(boards_write, event_store, "Stores Events", "Redis")
+Rel(tasks_write, event_store, "Stores Events", "Redis")
+Rel(boards_write, message_queue, "Publishes Events", "AMQP")
+Rel(tasks_write, message_queue, "Publishes Events", "AMQP")
+
+Rel(boards_read, read_db, "Reads", "MongoDB")
+Rel(tasks_read, read_db, "Reads", "MongoDB")
+Rel(boards_read, message_queue, "Subscribes", "AMQP")
+Rel(tasks_read, message_queue, "Subscribes", "AMQP")
+
+@enduml

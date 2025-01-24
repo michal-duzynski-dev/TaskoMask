@@ -1,0 +1,16 @@
+{
+  "stylesheet": "body { font-family: Arial, sans-serif; line-height: 1.6; } code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; } pre { background-color: #f8f8f8; padding: 16px; border-radius: 8px; overflow-x: auto; } h1, h2, h3 { color: #2c3e50; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }",
+  "css": "pre { white-space: pre-wrap; }",
+  "body_class": "markdown-body",
+  "highlight_style": "github",
+  "marked_options": {
+    "headerIds": true,
+    "smartypants": true
+  },
+  "pdf_options": {
+    "format": "A4",
+    "margin": "30mm 20mm",
+    "printBackground": true
+  },
+  "stylesheet_encoding": "utf-8"
+}

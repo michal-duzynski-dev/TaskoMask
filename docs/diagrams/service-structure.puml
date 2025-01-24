@@ -1,0 +1,42 @@
+@startuml TaskoMask Service Structure
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title TaskoMask Service Structure (Example: Tasks Service)
+
+package "Tasks.Write.Api" {
+    package "Domain" {
+        Component(entity, "Entity", "Task.cs", "Task aggregate root")
+        Component(value_object, "Value Object", "TaskStatus.cs", "Task status value object")
+        Component(domain_event, "Domain Event", "TaskStatusUpdated.cs", "Task status change event")
+    }
+    
+    package "Application" {
+        Component(command, "Command", "UpdateTaskStatusCommand.cs", "Update status command")
+        Component(handler, "Handler", "UpdateTaskStatusHandler.cs", "Command handler")
+        Component(validator, "Validator", "UpdateTaskStatusValidator.cs", "Command validation")
+    }
+    
+    package "Infrastructure" {
+        Component(repository, "Repository", "TaskRepository.cs", "Task data access")
+        Component(event_store, "Event Store", "RedisEventStore.cs", "Event persistence")
+        Component(publisher, "Publisher", "EventPublisher.cs", "Event publishing")
+    }
+    
+    package "API" {
+        Component(controller, "Controller", "TasksController.cs", "HTTP endpoints")
+        Component(model, "Model", "UpdateTaskStatusRequest.cs", "API models")
+    }
+}
+
+Rel(controller, handler, "Uses")
+Rel(handler, validator, "Validates using")
+Rel(handler, repository, "Uses")
+Rel(handler, entity, "Operates on")
+Rel(entity, domain_event, "Raises")
+Rel(handler, publisher, "Publishes via")
+Rel(publisher, event_store, "Stores in")
+
+@enduml

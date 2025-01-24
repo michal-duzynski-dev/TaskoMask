@@ -1,0 +1,26 @@
+@startuml TaskoMask Event Sourcing
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title TaskoMask Event Sourcing Implementation
+
+Component(command, "Command", "UpdateTaskStatusCommand", "Request to update task status")
+Component(handler, "Command Handler", "UpdateTaskStatusHandler", "Processes command")
+Component(aggregate, "Aggregate Root", "Task", "Task entity")
+Component(event, "Domain Event", "TaskStatusUpdated", "Event representing state change")
+Component(event_store, "Event Store", "RedisEventStoreService", "Stores events")
+Component(event_publisher, "Event Publisher", "MassTransitEventPublisher", "Publishes events")
+Component(consumer, "Event Consumer", "TaskStatusUpdatedConsumer", "Updates read model")
+Component(read_model, "Read Model", "TaskReadModel", "Optimized for queries")
+
+Rel(command, handler, "Handled by")
+Rel(handler, aggregate, "Updates")
+Rel(aggregate, event, "Raises")
+Rel(event, event_store, "Stored in")
+Rel(event, event_publisher, "Published via")
+Rel(event_publisher, consumer, "Consumed by")
+Rel(consumer, read_model, "Updates")
+
+@enduml
